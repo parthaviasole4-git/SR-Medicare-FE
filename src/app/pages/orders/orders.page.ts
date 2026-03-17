@@ -42,7 +42,10 @@ export class OrdersPage {
     );
   });
 
-  readonly totalPages = computed(() => Math.ceil(this.filteredOrders().length / this.pageSize));
+  readonly totalPages = computed(() => {
+    const total = this.ordersService.myOrdersTotal();
+    return Math.ceil(total / this.pageSize);
+  });
 
   readonly paginatedOrders = computed(() => {
     // If backend pagination is used, we might not need to slice here if we load per page.
@@ -63,7 +66,9 @@ export class OrdersPage {
     // Let's assume for now we want to support client-side filtering on whatever we fetched.
     // If we fetched 10 items, slice(0, 10) returns them all.
     
-    return this.filteredOrders();
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredOrders().slice(start, end);
   });
 
   readonly pages = computed(() => {
